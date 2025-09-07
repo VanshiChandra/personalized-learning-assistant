@@ -1,31 +1,35 @@
 import React, { useState } from "react";
-import { signupUser } from "../services/api.js";
-import { useNavigate } from "react-router-dom";
 
 export default function Signup({ setUser }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const res = await signupUser({ name, email, password });
-    if (res.user) {
-      setUser(res.user);
-      navigate("/dashboard");
+    const res = await fetch("http://localhost:5000/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json();
+    if (data.user && data.token) {
+      localStorage.setItem("token", data.token);
+      setUser(data.user);
     } else {
-      alert(res.error);
+      alert(data.error || "Signup failed");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="container">
       <h2>Signup</h2>
-      <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required />
-      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
-      <button type="submit">Signup</button>
-    </form>
+      <form onSubmit={handleSubmit}>
+        <input placeholder="Name" type="text" value={name} onChange={e => setName(e.target.value)} required />
+        <input placeholder="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+        <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+        <button type="submit">Signup</button>
+      </form>
+    </div>
   );
 }

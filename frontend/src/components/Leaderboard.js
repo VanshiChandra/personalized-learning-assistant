@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { getLeaderboard } from "../services/api.js";
 
 export default function Leaderboard() {
   const [leaders, setLeaders] = useState([]);
 
   useEffect(() => {
-    getLeaderboard().then(setLeaders);
+    const fetchLeaders = async () => {
+      const res = await fetch("http://localhost:5000/leaderboard");
+      const data = await res.json();
+      setLeaders(data);
+    };
+    fetchLeaders();
   }, []);
 
   return (
-    <div>
+    <div className="container">
       <h2>Leaderboard</h2>
       <ul>
         {leaders.map((l, i) => (

@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { getProgress } from "../services/api.js";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-export default function Dashboard({ userId }) {
-  const [scores, setScores] = useState([]);
+export default function Dashboard({ user }) {
+  const [data, setData] = useState({ labels: [], datasets: [] });
 
   useEffect(() => {
-    getProgress().then(setScores);
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:5000/records/chart-data", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result) {
+        setData({
+          labels: result.map(r => r.subject),
+          datasets: [{ label: "Scores", data: result.map(r => r.score), backgroundColor: "blue" }]
+        });
+      }
+    };
+    fetchData();
   }, []);
 
-  const data = {
-    labels: scores.map(s => s.subject),
-    datasets: [
-      {
-        label: "Score",
-        data: scores.map(s => s.score),
-        backgroundColor: "rgba(75,192,192,0.6)"
-      }
-    ]
-  };
-
   return (
-    <div>
-      <h2>Your Progress</h2>
+    <div className="container">
+      <h2>Dashboard</h2>
       <Bar data={data} />
     </div>
   );
