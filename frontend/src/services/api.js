@@ -1,13 +1,40 @@
-import axios from "axios";
+const BASE = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000/api";
 
-const API = axios.create({
-    baseURL: process.env.REACT_APP_BACKEND_URL,
-});
+export async function signupUser(data) {
+  const res = await fetch(`${BASE}/auth/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
 
-export const login = (data) => API.post('/auth/login', data);
-export const register = (data) => API.post('/auth/register', data);
-export const uploadScores = (scores, token) => 
-    API.post('/scores/upload', { scores }, { headers: { Authorization: `Bearer ${token}` } });
-export const getRecommendations = (token) => 
-    API.get('/scores/recommend', { headers: { Authorization: `Bearer ${token}` } });
-export const getLeaderboard = () => API.get('/leaderboard');
+export async function loginUser(data) {
+  const res = await fetch(`${BASE}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+export async function uploadScores(scores) {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${BASE}/scores/upload`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ scores })
+  });
+  return res.json();
+}
+
+export async function getProgress() {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${BASE}/progress`, { headers: { Authorization: `Bearer ${token}` } });
+  return res.json();
+}
+
+export async function getLeaderboard() {
+  const res = await fetch(`${BASE}/leaderboard`);
+  return res.json();
+}

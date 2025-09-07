@@ -1,40 +1,29 @@
-import React, { useState } from 'react';
-import { login } from '../services/api';
+import React, { useState } from "react";
+import { loginUser } from "../services/api.js";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ setUser }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+export default function Login({ setUser }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    try {
-      const res = await login({ email, password });
-      setUser({ ...res.data.user, token: res.data.token });
-    } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+    const res = await loginUser({ email, password });
+    if (res.user) {
+      setUser(res.user);
+      navigate("/dashboard");
+    } else {
+      alert(res.error);
     }
   };
 
   return (
-    <div style={styles.container}>
+    <form onSubmit={handleSubmit}>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} style={styles.input} />
-        <input placeholder="Password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} style={styles.input} />
-        {error && <p style={styles.error}>{error}</p>}
-        <button type="submit" style={styles.button}>Login</button>
-      </form>
-    </div>
+      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+      <button type="submit">Login</button>
+    </form>
   );
-};
-
-const styles = {
-  container: { display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '50px' },
-  form: { display: 'flex', flexDirection: 'column', width: '300px' },
-  input: { marginBottom: '15px', padding: '10px', fontSize: '16px' },
-  button: { padding: '10px', fontSize: '16px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px' },
-  error: { color: 'red', marginBottom: '10px' }
-};
-
-export default Login;
+}

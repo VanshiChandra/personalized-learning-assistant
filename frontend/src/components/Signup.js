@@ -1,42 +1,31 @@
-import React, { useState } from 'react';
-import { register } from '../services/api';
+import React, { useState } from "react";
+import { signupUser } from "../services/api.js";
+import { useNavigate } from "react-router-dom";
 
-const Signup = ({ setUser }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+export default function Signup({ setUser }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    try {
-      const res = await register({ name, email, password });
-      setUser({ ...res.data.user, token: res.data.token });
-    } catch (err) {
-      setError(err.response?.data?.error || 'Signup failed');
+    const res = await signupUser({ name, email, password });
+    if (res.user) {
+      setUser(res.user);
+      navigate("/dashboard");
+    } else {
+      alert(res.error);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input placeholder="Name" value={name} onChange={(e)=>setName(e.target.value)} style={styles.input} />
-        <input placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} style={styles.input} />
-        <input placeholder="Password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} style={styles.input} />
-        {error && <p style={styles.error}>{error}</p>}
-        <button type="submit" style={styles.button}>Sign Up</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <h2>Signup</h2>
+      <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required />
+      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+      <button type="submit">Signup</button>
+    </form>
   );
-};
-
-const styles = {
-  container: { display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '50px' },
-  form: { display: 'flex', flexDirection: 'column', width: '300px' },
-  input: { marginBottom: '15px', padding: '10px', fontSize: '16px' },
-  button: { padding: '10px', fontSize: '16px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '5px' },
-  error: { color: 'red', marginBottom: '10px' }
-};
-
-export default Signup;
+}

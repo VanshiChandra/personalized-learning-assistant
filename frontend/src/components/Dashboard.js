@@ -1,32 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { getRecommendations } from '../services/api';
+import React, { useEffect, useState } from "react";
+import { getProgress } from "../services/api.js";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 
-const Dashboard = ({ token }) => {
-  const [recommendations, setRecommendations] = useState(null);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+export default function Dashboard({ userId }) {
+  const [scores, setScores] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await getRecommendations(token);
-      setRecommendations(res.data);
-    };
-    fetchData();
-  }, [token]);
+    getProgress().then(setScores);
+  }, []);
 
-  if (!recommendations) return <p>Loading...</p>;
+  const data = {
+    labels: scores.map(s => s.subject),
+    datasets: [
+      {
+        label: "Score",
+        data: scores.map(s => s.score),
+        backgroundColor: "rgba(75,192,192,0.6)"
+      }
+    ]
+  };
 
   return (
-    <div style={styles.container}>
-      <h2>Recommended Subjects</h2>
-      <ul>
-        {recommendations.recommended_subjects.map(sub => (
-          <li key={sub}>
-            <strong>{sub}</strong>: {recommendations.study_plan[sub]}
-          </li>
-        ))}
-      </ul>
+    <div>
+      <h2>Your Progress</h2>
+      <Bar data={data} />
     </div>
   );
-};
-
-const styles = { container: { padding: '20px' } };
-export default Dashboard;
+}
