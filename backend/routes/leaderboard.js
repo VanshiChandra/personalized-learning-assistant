@@ -11,6 +11,8 @@ router.get('/', async (req, res) => {
       { $limit: 10 },
     ]);
 
+
+    
     const leaderboard = await Promise.all(
       agg.map(async item => {
         const user = await User.findById(item._id);
