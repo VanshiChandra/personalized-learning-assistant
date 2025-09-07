@@ -1,25 +1,27 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 const Score = require('../models/Score');
-const User = require('../models/user');
+const auth = require('../middleware/auth');
 
+// Leaderboard
 router.get('/', async (req, res) => {
   try {
-    const agg = await Score.aggregate([
-      { $group: { _id: "$userId", totalScore: { $sum: "$score" } } },
+    const leaderboard = await Score.aggregate([
+      { $group: { _id: '$userId', totalScore: { $sum: '$score' } } },
       { $sort: { totalScore: -1 } },
-      { $limit: 10 },
+      { $limit: 10 }
     ]);
-
-
-    
-    const leaderboard = await Promise.all(
-      agg.map(async item => {
-        const user = await User.findById(item._id);
-        return { name: user.name, totalScore: item.totalScore };
-      })
-    );
     res.json(leaderboard);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Chart data for user
+router.get('/chart-data', auth, async (req, res) => {
+  try {
+    const scores = await Score.find({ userId: req.user.id });
+    res.json(scores);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
