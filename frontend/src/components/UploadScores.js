@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { api } from '../services/api';
+import { uploadScores } from '../services/api';
 
-const UploadScores = ({ userId }) => {
+const UploadScores = ({ token }) => {
   const [scores, setScores] = useState([{ subject: '', score: '' }]);
+  const [message, setMessage] = useState('');
 
   const handleChange = (index, field, value) => {
     const newScores = [...scores];
@@ -10,31 +11,33 @@ const UploadScores = ({ userId }) => {
     setScores(newScores);
   };
 
+  const addRow = () => setScores([...scores, { subject: '', score: '' }]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
+    const formatted = scores.map(s => ({ subject: s.subject, score: Number(s.score) }));
     try {
-      await api.post('/records/upload', { scores }, { headers: { Authorization: `Bearer ${token}` } });
-      alert('Scores uploaded successfully');
+      await uploadScores(formatted, token);
+      setMessage('Scores uploaded successfully!');
     } catch (err) {
-      alert(err.response?.data?.message || 'Upload failed');
+      setMessage('Error uploading scores.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div style={styles.container}>
       <h2>Upload Scores</h2>
-      {scores.map((s, i) => (
-        <div key={i}>
-          <input type="text" placeholder="Subject" value={s.subject} onChange={e=>handleChange(i,'subject',e.target.value)} required />
-          <input type="number" placeholder="Score" value={s.score} onChange={e=>handleChange(i,'score',e.target.value)} required />
-        </div>
-      ))}
-      <button type="button" onClick={()=>setScores([...scores, { subject: '', score: '' }])}>Add Another</button>
-      <br /><br />
-      <button type="submit">Submit</button>
-    </form>
+      <form onSubmit={handleSubmit}>
+        {scores.map((s, i) => (
+          <div key={i} style={styles.row}>
+            <input placeholder="Subject" value={s.subject} onChange={e => handleChange(i, 'subject', e.target.value)} style={styles.input} />
+            <input placeholder="Score" type="number" value={s.score} onChange={e => handleChange(i, 'score', e.target.value)} style={styles.input} />
+          </div>
+        ))}
+        <button type="button" onClick={addRow} style={styles.buttonSecondary}>Add Row</button>
+        <button type="submit" style={styles.button}>Submit</button>
+      </form>
+      {message && <p>{message}</p>}
+    </div>
   );
-};
-
-export default UploadScores;
+}

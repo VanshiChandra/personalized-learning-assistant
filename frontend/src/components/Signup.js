@@ -1,39 +1,42 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { api } from '../services/api';
+import { register } from '../services/api';
 
 const Signup = ({ setUser }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/auth/register', { name, email, password });
-      localStorage.setItem('token', res.data.token);
-      setUser(res.data.user);
-      navigate('/dashboard');
+      const res = await register({ name, email, password });
+      setUser({ ...res.data.user, token: res.data.token });
     } catch (err) {
-      alert(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.error || 'Signup failed');
     }
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" value={name} onChange={e=>setName(e.target.value)} required />
-        <br /><br />
-        <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required />
-        <br /><br />
-        <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required />
-        <br /><br />
-        <button type="submit">Register</button>
+    <div style={styles.container}>
+      <h2>Sign Up</h2>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input placeholder="Name" value={name} onChange={(e)=>setName(e.target.value)} style={styles.input} />
+        <input placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} style={styles.input} />
+        <input placeholder="Password" type="password" value={password} onChange={(e)=>setPassword(e.target.value)} style={styles.input} />
+        {error && <p style={styles.error}>{error}</p>}
+        <button type="submit" style={styles.button}>Sign Up</button>
       </form>
     </div>
   );
+};
+
+const styles = {
+  container: { display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '50px' },
+  form: { display: 'flex', flexDirection: 'column', width: '300px' },
+  input: { marginBottom: '15px', padding: '10px', fontSize: '16px' },
+  button: { padding: '10px', fontSize: '16px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '5px' },
+  error: { color: 'red', marginBottom: '10px' }
 };
 
 export default Signup;

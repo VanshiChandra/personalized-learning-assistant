@@ -4,18 +4,6 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-// Upload scores
-router.post("/upload", auth, async (req, res) => {
-  try {
-    const scores = req.body.scores.map(s => ({ ...s, userId: req.user.id }));
-    await Score.insertMany(scores);
-    res.json({ message: "Scores uploaded successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Get scores for logged in user
 router.get("/", auth, async (req, res) => {
   try {
     const scores = await Score.find({ userId: req.user.id });

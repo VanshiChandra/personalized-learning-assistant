@@ -1,30 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { api } from '../services/api';
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
+import { getRecommendations } from '../services/api';
 
-const Dashboard = ({ userId }) => {
-  const [chartData, setChartData] = useState(null);
+const Dashboard = ({ token }) => {
+  const [recommendations, setRecommendations] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem('token');
-      const res = await api.get('/records/chart-data', { headers: { Authorization: `Bearer ${token}` } });
-      const labels = res.data.map(item => item.subject);
-      const scores = res.data.map(item => item.score);
-      setChartData({ labels, datasets: [{ label: 'Scores', data: scores, borderColor: 'blue', tension: 0.4 }] });
+      const res = await getRecommendations(token);
+      setRecommendations(res.data);
     };
     fetchData();
-  }, [userId]);
+  }, [token]);
 
-  if (!chartData) return <p>Loading...</p>;
+  if (!recommendations) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h2>Your Progress</h2>
-      <Line data={chartData} />
+    <div style={styles.container}>
+      <h2>Recommended Subjects</h2>
+      <ul>
+        {recommendations.recommended_subjects.map(sub => (
+          <li key={sub}>
+            <strong>{sub}</strong>: {recommendations.study_plan[sub]}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
+const styles = { container: { padding: '20px' } };
 export default Dashboard;
