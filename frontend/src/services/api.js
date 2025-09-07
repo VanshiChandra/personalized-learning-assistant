@@ -1,8 +1,8 @@
 import axios from 'axios';
-const API = axios.create({ baseURL: process.env.REACT_APP_BACKEND_URL });
 
-export const signup = (data) => API.post('/auth/signup', data);
-export const login = (data) => API.post('/auth/login', data);
-export const uploadScores = (token, scores) => API.post('/scores/upload', { scores }, { headers: { Authorization: token } });
-export const getRecommendations = (token) => API.get('/scores/recommend', { headers: { Authorization: token } });
-export const getLeaderboard = () => API.get('/leaderboard');
+const BASE_URL = process.env.REACT_APP_BACKEND_URL; // your backend URL
+
+export const api = axios.create({
+  baseURL: BASE_URL,
+  headers: { 'Content-Type': 'application/json' }
+});

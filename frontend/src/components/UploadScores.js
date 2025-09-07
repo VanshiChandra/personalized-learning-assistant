@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { uploadScores } from '../services/api';
+import { api } from '../services/api';
 
-export default function UploadScores({ userId }) {
+const UploadScores = ({ userId }) => {
   const [scores, setScores] = useState([{ subject: '', score: '' }]);
 
   const handleChange = (index, field, value) => {
@@ -10,24 +10,31 @@ export default function UploadScores({ userId }) {
     setScores(newScores);
   };
 
-  const addRow = () => setScores([...scores, { subject: '', score: '' }]);
-  const handleUpload = async () => {
-    const formatted = scores.map(s => ({ subject: s.subject, score: Number(s.score) }));
-    await uploadScores(userId, formatted);
-    alert("Scores uploaded!");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    try {
+      await api.post('/records/upload', { scores }, { headers: { Authorization: `Bearer ${token}` } });
+      alert('Scores uploaded successfully');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Upload failed');
+    }
   };
 
   return (
-    <div>
-      <h3>Upload Scores</h3>
+    <form onSubmit={handleSubmit}>
+      <h2>Upload Scores</h2>
       {scores.map((s, i) => (
         <div key={i}>
-          <input placeholder="Subject" value={s.subject} onChange={e => handleChange(i, 'subject', e.target.value)} />
-          <input placeholder="Score" value={s.score} type="number" onChange={e => handleChange(i, 'score', e.target.value)} />
+          <input type="text" placeholder="Subject" value={s.subject} onChange={e=>handleChange(i,'subject',e.target.value)} required />
+          <input type="number" placeholder="Score" value={s.score} onChange={e=>handleChange(i,'score',e.target.value)} required />
         </div>
       ))}
-      <button onClick={addRow}>Add Subject</button>
-      <button onClick={handleUpload}>Upload Scores</button>
-    </div>
+      <button type="button" onClick={()=>setScores([...scores, { subject: '', score: '' }])}>Add Another</button>
+      <br /><br />
+      <button type="submit">Submit</button>
+    </form>
   );
-}
+};
+
+export default UploadScores;

@@ -1,35 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { getRecommendations } from '../services/api';
-import { Bar } from 'react-chartjs-2';
+import { api } from '../services/api';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
 
-export default function Dashboard({ token }) {
-  const [data, setData] = useState(null);
+const Dashboard = ({ userId }) => {
+  const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
-    getRecommendations(token).then(res => setData(res.data));
-  }, [token]);
+    const fetchData = async () => {
+      const token = localStorage.getItem('token');
+      const res = await api.get('/records/chart-data', { headers: { Authorization: `Bearer ${token}` } });
+      const labels = res.data.map(item => item.subject);
+      const scores = res.data.map(item => item.score);
+      setChartData({ labels, datasets: [{ label: 'Scores', data: scores, borderColor: 'blue', tension: 0.4 }] });
+    };
+    fetchData();
+  }, [userId]);
 
-  if (!data) return <div>Loading...</div>;
-
-  const chartData = {
-    labels: data.recommended_subjects,
-    datasets: [
-      {
-        label: 'Weakness Level',
-        data: Object.values(data.progress),
-        backgroundColor: 'rgba(255, 99, 132, 0.5)'
-      }
-    ]
-  };
+  if (!chartData) return <p>Loading...</p>;
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Weakest Subjects</h2>
-      <Bar data={chartData} />
-      <h3 className="text-xl mt-6">Study Plan</h3>
-      <ul className="list-disc ml-6 mt-2">
-        {Object.entries(data.study_plan).map(([sub, plan], i) => <li key={i}>{plan}</li>)}
-      </ul>
+    <div>
+      <h2>Your Progress</h2>
+      <Line data={chartData} />
     </div>
   );
-}
+};
+
+export default Dashboard;
