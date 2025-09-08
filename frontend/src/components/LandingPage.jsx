@@ -1,16 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const Landing = () => {
+function LandingPage() {
+  const navigate = useNavigate();
+  
   return (
     <div className="landing">
-      <h1>Welcome to Student Performance App</h1>
-      <p>Track, analyze, and improve student performance with ease.</p>
-      <Link to="/signup">
-        <button>Get Started</button>
-      </Link>
+      <h1>Welcome to Student Performance Assistant</h1>
+      <button onClick={() => navigate("/login")}>Get Started</button>
     </div>
   );
-};
+}
 
-export default Landing;
+export default LandingPage;
