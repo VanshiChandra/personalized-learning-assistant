@@ -1,35 +1,70 @@
 import React, { useState } from "react";
 
 const UploadScores = () => {
-  const [file, setFile] = useState(null);
+  const [scores, setScores] = useState([{ subject: "", marks: "" }]);
+
+  const handleChange = (index, field, value) => {
+    const newScores = [...scores];
+    newScores[index][field] = value;
+    setScores(newScores);
+  };
+
+  const addRow = () => {
+    setScores([...scores, { subject: "", marks: "" }]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) return alert("Please select a file!");
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      const res = await fetch("http://localhost:5000/upload-scores", {
-        method: "POST",
-        body: formData,
-      });
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/scores/upload`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ scores }),
+        }
+      );
       const data = await res.json();
-      alert(data.message);
+      if (res.ok) {
+        alert("Scores uploaded successfully!");
+      } else {
+        alert(data.error || "Failed to upload scores");
+      }
     } catch (err) {
       console.error(err);
+      alert("Server error. Please try again.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Upload Scores</h2>
-      <input
-        type="file"
-        accept=".csv"
-        onChange={(e) => setFile(e.target.files[0])}
-      />
-      <button type="submit">Upload</button>
+      {scores.map((score, i) => (
+        <div key={i}>
+          <input
+            type="text"
+            placeholder="Subject"
+            value={score.subject}
+            onChange={(e) => handleChange(i, "subject", e.target.value)}
+            required
+          />
+          <input
+            type="number"
+            placeholder="Marks"
+            value={score.marks}
+            onChange={(e) => handleChange(i, "marks", e.target.value)}
+            required
+          />
+        </div>
+      ))}
+      <button type="button" onClick={addRow}>
+        Add Subject
+      </button>
+      <button type="submit">Submit Scores</button>
     </form>
   );
 };

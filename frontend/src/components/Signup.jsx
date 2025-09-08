@@ -10,20 +10,24 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/signup`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        }
+      );
       const data = await res.json();
-      if (data.success) {
+      if (res.ok) {
         alert("Signup successful! Please login.");
         navigate("/login");
       } else {
-        alert(data.message);
+        alert(data.message || "Signup failed");
       }
     } catch (err) {
       console.error(err);
+      alert("Server error. Please try again.");
     }
   };
 

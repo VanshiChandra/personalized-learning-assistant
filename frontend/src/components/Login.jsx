@@ -1,25 +1,26 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
+      const res = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
       const data = await res.json();
-
-      if (res.ok && data.token) {
+      if (res.ok) {
         localStorage.setItem("token", data.token);
-        navigate("/dashboard"); // ✅ redirect to dashboard
+        navigate("/dashboard");
       } else {
         alert(data.message || "Login failed");
       }
@@ -30,27 +31,25 @@ function Login() {
   };
 
   return (
-    <div className="form-container">
-      <form onSubmit={handleLogin} className="form-box">
-        <h2>Login</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <h2>Login</h2>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
   );
-}
+};
 
 export default Login;
