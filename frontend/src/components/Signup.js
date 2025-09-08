@@ -1,35 +1,50 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
-export default function Signup({ setUser }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+function Signup({ setUser }) {
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const navigate = useNavigate();
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("http://localhost:5000/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
-    });
-    const data = await res.json();
-    if (data.user && data.token) {
-      localStorage.setItem("token", data.token);
-      setUser(data.user);
-    } else {
-      alert(data.error || "Signup failed");
+    try {
+      const res = await api.post("/auth/signup", form);
+      localStorage.setItem("token", res.data.token);
+      setUser(res.data.user);
+      navigate("/dashboard");
+    } catch (err) {
+      alert("Signup failed: " + err.response?.data?.error);
     }
   };
 
   return (
-    <div className="container">
+    <form onSubmit={handleSubmit} style={{ maxWidth: "400px", margin: "2rem auto" }}>
       <h2>Signup</h2>
-      <form onSubmit={handleSubmit}>
-        <input placeholder="Name" type="text" value={name} onChange={e => setName(e.target.value)} required />
-        <input placeholder="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-        <button type="submit">Signup</button>
-      </form>
-    </div>
+      <input
+        type="text"
+        placeholder="Name"
+        value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
+        required
+      /><br />
+      <input
+        type="email"
+        placeholder="Email"
+        value={form.email}
+        onChange={(e) => setForm({ ...form, email: e.target.value })}
+        required
+      /><br />
+      <input
+        type="password"
+        placeholder="Password"
+        value={form.password}
+        onChange={(e) => setForm({ ...form, password: e.target.value })}
+        required
+      /><br />
+      <button type="submit">Signup</button>
+    </form>
   );
 }
+
+export default Signup;

@@ -1,25 +1,33 @@
 import React, { useEffect, useState } from "react";
+import api from "../services/api";
 
-export default function Leaderboard() {
+function Leaderboard() {
   const [leaders, setLeaders] = useState([]);
 
   useEffect(() => {
     const fetchLeaders = async () => {
-      const res = await fetch("http://localhost:5000/leaderboard");
-      const data = await res.json();
-      setLeaders(data);
+      try {
+        const res = await api.get("/leaderboard");
+        setLeaders(res.data);
+      } catch (err) {
+        console.error(err);
+      }
     };
     fetchLeaders();
   }, []);
 
   return (
-    <div className="container">
-      <h2>Leaderboard</h2>
+    <div>
+      <h3>Leaderboard</h3>
       <ul>
-        {leaders.map((l, i) => (
-          <li key={i}>{l.name}: {l.totalScore}</li>
+        {leaders.map((u, i) => (
+          <li key={i}>
+            {u.name} - {u.totalScore}
+          </li>
         ))}
       </ul>
     </div>
   );
 }
+
+export default Leaderboard;

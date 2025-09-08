@@ -1,14 +1,21 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export default function LandingPage() {
-  const navigate = useNavigate();
+function LandingPage() {
   return (
-    <div className="container">
-      <h1>Welcome to Personalized Learning Assistant</h1>
-      <p style={{ textAlign: "center" }}>AI-powered personalized study plans and progress tracking</p>
-      <button onClick={() => navigate("/login")}>Login</button>
-      <button onClick={() => navigate("/signup")}>Signup</button>
+    <div style={{ textAlign: "center", padding: "2rem" }}>
+      <h1>🎓 Personalized Learning Assistant</h1>
+      <p>Track your scores, get recommendations, and improve your learning!</p>
+      <div style={{ marginTop: "2rem" }}>
+        <Link to="/login">
+          <button style={{ marginRight: "1rem" }}>Login</button>
+        </Link>
+        <Link to="/signup">
+          <button>Signup</button>
+        </Link>
+      </div>
     </div>
   );
 }
+
+export default LandingPage;

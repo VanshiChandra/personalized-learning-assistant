@@ -1,63 +1,117 @@
-body {
-    font-family: Arial, sans-serif;
+/* Reset some default styles */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f0f2f5;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
   
-  .navbar {
+  body {
+    background: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  /* Navbar */
+  nav {
+    background: #4CAF50;
+    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #0077b6;
-    color: white;
-    padding: 10px 20px;
   }
   
-  .navbar a, .navbar button {
-    margin-left: 15px;
+  nav a {
     color: white;
     text-decoration: none;
+    margin-left: 15px;
     font-weight: bold;
-    background: none;
-    border: none;
-    cursor: pointer;
+    transition: 0.3s;
   }
   
-  .navbar button:hover, .navbar a:hover {
+  nav a:hover {
     text-decoration: underline;
   }
   
+  /* Containers */
   .container {
-    max-width: 600px;
-    margin: 50px auto;
+    max-width: 800px;
+    margin: 40px auto;
     background: white;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
-  input, button {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
+  /* Headings */
+  h1, h2, h3 {
+    margin-bottom: 20px;
+    color: #222;
+    text-align: center;
+  }
+  
+  /* Forms */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"] {
+    padding: 12px;
     border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 100%;
   }
   
   button {
-    background-color: #0077b6;
+    background: #4CAF50;
     color: white;
+    padding: 12px;
     border: none;
-    font-weight: bold;
+    border-radius: 6px;
+    font-size: 16px;
     cursor: pointer;
+    transition: 0.3s;
   }
   
   button:hover {
-    background-color: #0096c7;
+    background: #45a049;
   }
   
-  h1, h2 {
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  table th,
+  table td {
+    padding: 12px;
+    border: 1px solid #ddd;
     text-align: center;
+  }
+  
+  table th {
+    background: #f4f4f4;
+  }
+  
+  /* Utility */
+  .text-center {
+    text-align: center;
+  }
+  
+  .mt-20 {
+    margin-top: 20px;
+  }
+  
+  .error {
+    color: red;
+    font-size: 14px;
   }
   

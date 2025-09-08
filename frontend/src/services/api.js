@@ -1,40 +1,15 @@
-const BASE = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000/api";
+import axios from "axios";
 
-export async function signupUser(data) {
-  const res = await fetch(`${BASE}/auth/signup`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-  return res.json();
-}
+const backendURL = "https://your-backend-url.up.railway.app"; // replace with actual
+const mlURL = "https://your-ml-service.up.railway.app";       // replace with actual
 
-export async function loginUser(data) {
-  const res = await fetch(`${BASE}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-  return res.json();
-}
+const api = axios.create({
+  baseURL: backendURL,
+});
 
-export async function uploadScores(scores) {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`${BASE}/scores/upload`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ scores })
-  });
-  return res.json();
-}
+// ML requests (special case)
+api.ml = axios.create({
+  baseURL: mlURL,
+});
 
-export async function getProgress() {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`${BASE}/progress`, { headers: { Authorization: `Bearer ${token}` } });
-  return res.json();
-}
-
-export async function getLeaderboard() {
-  const res = await fetch(`${BASE}/leaderboard`);
-  return res.json();
-}
+export default api;

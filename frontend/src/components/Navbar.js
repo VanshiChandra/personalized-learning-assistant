@@ -1,20 +1,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function Navbar({ user, setUser }) {
+function Navbar({ user, setUser }) {
   return (
-    <div className="navbar">
-      <div><Link to="/">PLA</Link></div>
-      <div>
-        {user ? (
-          <>
-            <Link to="/dashboard">Dashboard</Link>
-            <Link to="/upload">Upload Scores</Link>
-            <Link to="/leaderboard">Leaderboard</Link>
-            <button onClick={() => setUser(null)}>Logout</button>
-          </>
-        ) : null}
-      </div>
-    </div>
+    <nav style={{ padding: "1rem", background: "#f5f5f5", marginBottom: "1rem" }}>
+      <Link to="/" style={{ marginRight: "1rem" }}>Home</Link>
+      {user ? (
+        <>
+          <Link to="/dashboard" style={{ marginRight: "1rem" }}>Dashboard</Link>
+          <button onClick={() => setUser(null)}>Logout</button>
+        </>
+      ) : (
+        <>
+          <Link to="/login" style={{ marginRight: "1rem" }}>Login</Link>
+          <Link to="/signup">Signup</Link>
+        </>
+      )}
+    </nav>
   );
 }
+
+export default Navbar;
