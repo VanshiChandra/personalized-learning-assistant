@@ -1,3 +1,4 @@
+// frontend/src/components/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 
 const Dashboard = () => {
@@ -16,18 +17,18 @@ const Dashboard = () => {
         const res = await fetch(
           `${process.env.REACT_APP_BACKEND_URL}/api/auth/me`,
           {
-            method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`, // ✅ send token
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        const data = await res.json();
-        if (res.ok) {
-          setUser(data.user);
-        } else {
-          console.error(data.error);
+
+        if (!res.ok) {
+          throw new Error(`Failed: ${res.status}`);
         }
+
+        const data = await res.json();
+        setUser(data);
       } catch (err) {
         console.error("Error fetching user:", err);
       } finally {
@@ -38,19 +39,14 @@ const Dashboard = () => {
     fetchUser();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p>Loading dashboard...</p>;
+  if (!user) return <p>Please log in to view your dashboard.</p>;
 
   return (
     <div>
-      <h2>Dashboard</h2>
-      {user ? (
-        <>
-          <p>Welcome, <strong>{user.name}</strong> 👋</p>
-          <p>Email: {user.email}</p>
-        </>
-      ) : (
-        <p>No user data found. Please login again.</p>
-      )}
+      <h2>Welcome, {user.name}!</h2>
+      <p>Email: {user.email}</p>
+      <p>User ID: {user.id}</p>
     </div>
   );
 };
