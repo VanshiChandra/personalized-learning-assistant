@@ -8,7 +8,7 @@ const Leaderboard = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/leaderboard`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/leaderboard`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
