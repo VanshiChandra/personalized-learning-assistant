@@ -18,16 +18,23 @@ const Signup = () => {
           body: JSON.stringify({ name, email, password }),
         }
       );
-      const data = await res.json();
+
+      let data;
+      try {
+        data = await res.json(); // Parse JSON safely
+      } catch {
+        throw new Error("Server did not return JSON. Check backend route.");
+      }
+
       if (res.ok) {
         alert("Signup successful! Please login.");
         navigate("/login");
       } else {
-        alert(data.error || "Signup failed"); // ✅ fixed to match backend
+        alert(data.error || "Signup failed");
       }
     } catch (err) {
-      console.error(err);
-      alert("Server error. Please try again.");
+      console.error("Signup error:", err.message);
+      alert(err.message);
     }
   };
 

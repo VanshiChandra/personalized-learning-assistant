@@ -17,17 +17,23 @@ const Login = () => {
           body: JSON.stringify({ email, password }),
         }
       );
-      const data = await res.json();
+
+      let data;
+      try {
+        data = await res.json(); // Try parsing JSON
+      } catch {
+        throw new Error("Server did not return JSON. Check backend route.");
+      }
+
       if (res.ok) {
-        // ✅ Save token for protected routes
         localStorage.setItem("token", data.token);
         navigate("/dashboard");
       } else {
-        alert(data.error || "Login failed"); // ✅ use error (backend returns { error: ... })
+        alert(data.error || "Login failed");
       }
     } catch (err) {
-      console.error(err);
-      alert("Server error. Please try again.");
+      console.error("Login error:", err.message);
+      alert(err.message);
     }
   };
 
