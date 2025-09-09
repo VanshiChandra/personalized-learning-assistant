@@ -23,7 +23,7 @@ const Signup = () => {
         alert("Signup successful! Please login.");
         navigate("/login");
       } else {
-        alert(data.message || "Signup failed");
+        alert(data.error || "Signup failed"); // ✅ fixed to match backend
       }
     } catch (err) {
       console.error(err);

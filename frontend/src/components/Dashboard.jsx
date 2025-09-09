@@ -1,55 +1,55 @@
 import React, { useEffect, useState } from "react";
 
 const Dashboard = () => {
-  const [scores, setScores] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchScores = async () => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const token = localStorage.getItem("token");
         const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/scores`,
+          `${process.env.REACT_APP_BACKEND_URL}/auth/me`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ send token
+            },
           }
         );
         const data = await res.json();
         if (res.ok) {
-          setScores(data);
+          setUser(data.user);
         } else {
-          alert(data.error || "Failed to load scores");
+          console.error(data.error);
         }
       } catch (err) {
-        console.error(err);
-        alert("Server error. Please try again.");
+        console.error("Error fetching user:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchScores();
+    fetchUser();
   }, []);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div>
-      <h2>My Dashboard</h2>
-      {scores.length > 0 ? (
-        <table border="1" cellPadding="8">
-          <thead>
-            <tr>
-              <th>Subject</th>
-              <th>Marks</th>
-            </tr>
-          </thead>
-          <tbody>
-            {scores.map((score, idx) => (
-              <tr key={idx}>
-                <td>{score.subject}</td>
-                <td>{score.marks}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <h2>Dashboard</h2>
+      {user ? (
+        <>
+          <p>Welcome, <strong>{user.name}</strong> 👋</p>
+          <p>Email: {user.email}</p>
+        </>
       ) : (
-        <p>No scores uploaded yet.</p>
+        <p>No user data found. Please login again.</p>
       )}
     </div>
   );

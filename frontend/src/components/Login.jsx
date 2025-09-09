@@ -19,10 +19,11 @@ const Login = () => {
       );
       const data = await res.json();
       if (res.ok) {
+        // ✅ Save token for protected routes
         localStorage.setItem("token", data.token);
         navigate("/dashboard");
       } else {
-        alert(data.message || "Login failed");
+        alert(data.error || "Login failed"); // ✅ use error (backend returns { error: ... })
       }
     } catch (err) {
       console.error(err);
