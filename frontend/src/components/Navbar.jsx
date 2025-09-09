@@ -1,18 +1,32 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // ✅ Clear token
+    navigate("/"); // ✅ Redirect to landing page
+  };
+
   return (
-    <nav className="navbar">
-      <div className="logo">
-        <Link to="/">Student Performance</Link>
-      </div>
-      <div className="nav-links">
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/leaderboard">Leaderboard</Link>
-        <Link to="/upload-scores">Upload Scores</Link>
-        <Link to="/login">Login</Link>
-        <Link to="/signup">Signup</Link>
+    <nav>
+      <h2>Student Performance App</h2>
+      <div>
+        {!token ? (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/signup">Signup</Link>
+          </>
+        ) : (
+          <>
+            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/upload-scores">Upload Scores</Link>
+            <Link to="/leaderboard">Leaderboard</Link>
+            <button onClick={handleLogout}>Logout</button>
+          </>
+        )}
       </div>
     </nav>
   );

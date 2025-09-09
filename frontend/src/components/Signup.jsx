@@ -18,23 +18,20 @@ const Signup = () => {
           body: JSON.stringify({ name, email, password }),
         }
       );
-
-      let data;
-      try {
-        data = await res.json(); // Parse JSON safely
-      } catch {
-        throw new Error("Server did not return JSON. Check backend route.");
-      }
+      const data = await res.json();
 
       if (res.ok) {
-        alert("Signup successful! Please login.");
-        navigate("/login");
+        // ✅ Save token directly after signup
+        localStorage.setItem("token", data.token);
+
+        // ✅ Redirect user to dashboard
+        navigate("/dashboard");
       } else {
         alert(data.error || "Signup failed");
       }
     } catch (err) {
-      console.error("Signup error:", err.message);
-      alert(err.message);
+      console.error(err);
+      alert("Server error. Please try again.");
     }
   };
 

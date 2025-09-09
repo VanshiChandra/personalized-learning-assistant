@@ -1,5 +1,6 @@
+// frontend/src/App.jsx
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Landing from "./components/LandingPage";
@@ -9,7 +10,7 @@ import Dashboard from "./components/Dashboard";
 import Leaderboard from "./components/Leaderboard";
 import UploadScores from "./components/UploadScores";
 
-// ProtectedRoute component
+// ProtectedRoute wrapper
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" />;
@@ -17,44 +18,47 @@ const ProtectedRoute = ({ children }) => {
 
 const App = () => {
   return (
-    <div className="app-container">
-      <Navbar />
-      <div className="content">
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+    <Router>
+      <div className="app-container">
+        <Navbar />
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/leaderboard"
-            element={
-              <ProtectedRoute>
-                <Leaderboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/upload-scores"
-            element={
-              <ProtectedRoute>
-                <UploadScores />
-              </ProtectedRoute>
-            }
-          />
+            {/* Protected pages */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/upload-scores"
+              element={
+                <ProtectedRoute>
+                  <UploadScores />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/leaderboard"
+              element={
+                <ProtectedRoute>
+                  <Leaderboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Fallback for unmatched routes */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 };
 
