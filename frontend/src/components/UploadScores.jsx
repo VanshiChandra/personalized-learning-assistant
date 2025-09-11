@@ -27,7 +27,7 @@ const UploadScores = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `${import.meta.env.REACT_APP_BACKEND_URL}/api/scores/upload`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/scores/upload`,
         {
           method: "POST",
           headers: {

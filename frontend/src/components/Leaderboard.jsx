@@ -9,7 +9,7 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.REACT_APP_BACKEND_URL}/api/leaderboard`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/leaderboard`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
