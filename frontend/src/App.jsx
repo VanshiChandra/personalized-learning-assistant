@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Landing from "./components/LandingPage";
@@ -9,15 +9,15 @@ import Dashboard from "./components/Dashboard";
 import Leaderboard from "./components/Leaderboard";
 import UploadScores from "./components/UploadScores";
 
-// ✅ ProtectedRoute wrapper
+// ProtectedRoute wrapper
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" />;
+  return token ? children : <Navigate to="/login" replace />;
 };
 
 const App = () => {
   return (
-    <Router>
+    <BrowserRouter>
       <div className="app-container">
         <Navbar />
         <div className="content">
@@ -27,7 +27,7 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
-            {/* Protected routes (only visible after login/signup) */}
+            {/* Protected routes */}
             <Route
               path="/dashboard"
               element={
@@ -54,11 +54,11 @@ const App = () => {
             />
 
             {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 };
 
