@@ -11,10 +11,13 @@ import progressRoutes from "./routes/progress.js";
 dotenv.config();
 const app = express();
 
-// ✅ Explicit CORS config for Vercel frontend
+// ✅ Looser CORS config for development + production
 app.use(
   cors({
-    origin: ["https://personalized-learning-assistant-two.vercel.app"], // your deployed frontend
+    origin: [
+      "http://localhost:3000", // local dev
+      "https://personalized-learning-assistant-two.vercel.app", // deployed frontend
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -30,7 +33,7 @@ app.use("/api/progress", progressRoutes);
 
 // ✅ Health check
 app.get("/", (req, res) => {
-  res.send("Backend is running ✅");
+  res.send("✅ Backend is running...");
 });
 
 // MongoDB connection

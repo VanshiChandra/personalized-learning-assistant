@@ -1,52 +1,32 @@
 // frontend/src/components/Dashboard.jsx
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/api/auth/me`,
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/me`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-
-        if (!res.ok) {
-          throw new Error(`Failed: ${res.status}`);
-        }
-
-        const data = await res.json();
-        setUser(data);
+        setUser(res.data);
       } catch (err) {
         console.error("Error fetching user:", err);
-      } finally {
-        setLoading(false);
       }
     };
-
     fetchUser();
   }, []);
 
-  if (loading) return <p>Loading dashboard...</p>;
-  if (!user) return <p>Please log in to view your dashboard.</p>;
-
   return (
     <div>
-      <h2>Welcome, {user.name}!</h2>
-      <p>Email: {user.email}</p>
-      <p>User ID: {user.id}</p>
+      <h2>Dashboard</h2>
+      {user ? <p>Welcome, {user.username}</p> : <p>Loading...</p>}
     </div>
   );
 };

@@ -7,56 +7,44 @@ import Landing from "./components/LandingPage";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Dashboard from "./components/Dashboard";
-import Leaderboard from "./components/Leaderboard";
 import UploadScores from "./components/UploadScores";
 
-// ProtectedRoute wrapper
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" />;
+  return token ? children : <Navigate to="/login" replace />;
 };
 
 const App = () => {
   return (
     <Router>
-      <div className="app-container">
-        <Navbar />
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+      <Navbar />
+      <div className="content">
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-            {/* Protected pages */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/upload-scores"
-              element={
-                <ProtectedRoute>
-                  <UploadScores />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/leaderboard"
-              element={
-                <ProtectedRoute>
-                  <Leaderboard />
-                </ProtectedRoute>
-              }
-            />
+          {/* Protected routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/upload-scores"
+            element={
+              <ProtectedRoute>
+                <UploadScores />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </div>
+          {/* Fallback */}
+          <Route path="*" element={<h2>Page Not Found</h2>} />
+        </Routes>
       </div>
     </Router>
   );

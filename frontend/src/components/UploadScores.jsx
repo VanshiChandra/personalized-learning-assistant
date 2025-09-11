@@ -1,71 +1,55 @@
+// frontend/src/components/UploadScores.jsx
 import React, { useState } from "react";
+import axios from "axios";
 
 const UploadScores = () => {
   const [scores, setScores] = useState([{ subject: "", marks: "" }]);
 
   const handleChange = (index, field, value) => {
-    const newScores = [...scores];
-    newScores[index][field] = value;
-    setScores(newScores);
+    const updated = [...scores];
+    updated[index][field] = value;
+    setScores(updated);
   };
 
-  const addRow = () => {
-    setScores([...scores, { subject: "", marks: "" }]);
-  };
+  const addRow = () => setScores([...scores, { subject: "", marks: "" }]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/scores/upload`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ scores }),
-        }
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/scores/upload`,
+        { scores },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      const data = await res.json();
-      if (res.ok) {
-        alert("Scores uploaded successfully!");
-      } else {
-        alert(data.error || "Failed to upload scores");
-      }
+      alert("Scores uploaded successfully!");
     } catch (err) {
-      console.error(err);
-      alert("Server error. Please try again.");
+      console.error("Error uploading scores:", err);
+      alert("Failed to upload scores");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
       <h2>Upload Scores</h2>
-      {scores.map((score, i) => (
-        <div key={i}>
+      {scores.map((score, index) => (
+        <div key={index}>
           <input
             type="text"
             placeholder="Subject"
             value={score.subject}
-            onChange={(e) => handleChange(i, "subject", e.target.value)}
-            required
+            onChange={(e) => handleChange(index, "subject", e.target.value)}
           />
           <input
             type="number"
             placeholder="Marks"
             value={score.marks}
-            onChange={(e) => handleChange(i, "marks", e.target.value)}
-            required
+            onChange={(e) => handleChange(index, "marks", e.target.value)}
           />
         </div>
       ))}
-      <button type="button" onClick={addRow}>
-        Add Subject
-      </button>
-      <button type="submit">Submit Scores</button>
-    </form>
+      <button onClick={addRow}>Add Row</button>
+      <button onClick={handleSubmit}>Upload</button>
+    </div>
   );
 };
 
