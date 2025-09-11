@@ -9,8 +9,8 @@ const Landing = () => {
 
   return (
     <div className="landing">
-      <h1>Welcome to the Student Performance App</h1>
-      <p>Track scores, compete on the leaderboard, and manage your progress.</p>
+      <h1>Welcome to the Personalized Learning Assistant App</h1>
+      <p>Upload your scores and get assistance for each subject.</p>
       {token && user ? (
         <button onClick={() => navigate("/dashboard")}>Go to Dashboard</button>
       ) : (
