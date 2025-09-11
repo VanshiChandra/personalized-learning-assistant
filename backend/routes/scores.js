@@ -14,7 +14,7 @@ router.post("/upload", auth, async (req, res) => {
 
     const scores = req.body.scores.map((s) => ({
       subject: s.subject,
-      marks: s.marks,
+      score: s.marks,
       userId: req.user.id,
     }));
 
