@@ -1,4 +1,3 @@
-// frontend/src/components/UploadScores.jsx
 import React, { useState, useEffect } from "react";
 
 const UploadScores = () => {
@@ -27,7 +26,7 @@ const UploadScores = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/scores/upload`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/scores/upload`,
         {
           method: "POST",
           headers: {

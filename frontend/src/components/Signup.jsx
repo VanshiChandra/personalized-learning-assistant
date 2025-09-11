@@ -1,4 +1,3 @@
-// frontend/src/components/Signup.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,15 +11,17 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
       });
+
       const data = await res.json();
+
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user)); // save user also
+        localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/dashboard");
       } else {
         setError(data.error || "Signup failed");

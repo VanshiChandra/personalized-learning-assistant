@@ -1,4 +1,3 @@
-// frontend/src/components/Leaderboard.jsx
 import React, { useEffect, useState } from "react";
 
 const Leaderboard = () => {
@@ -9,7 +8,7 @@ const Leaderboard = () => {
     const fetchLeaderboard = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/api/leaderboard`,
+          `${process.env.REACT_APP_BACKEND_URL}/api/leaderboard`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
