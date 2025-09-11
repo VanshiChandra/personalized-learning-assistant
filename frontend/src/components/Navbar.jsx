@@ -8,21 +8,25 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 
   return (
     <nav className="navbar">
       <Link to="/">Home</Link>
-      {!token && <Link to="/login">Login</Link>}
-      {!token && <Link to="/signup">Signup</Link>}
-
-      {token && <Link to="/dashboard">Dashboard</Link>}
-      {token && <Link to="/upload-scores">Upload Scores</Link>}
-      {token && (
-        <button onClick={handleLogout} style={{ marginLeft: "10px" }}>
-          Logout
-        </button>
+      {token ? (
+        <>
+          <Link to="/dashboard">Dashboard</Link>
+          <Link to="/upload-scores">Upload Scores</Link>
+          <Link to="/leaderboard">Leaderboard</Link>
+          <button onClick={handleLogout}>Logout</button>
+        </>
+      ) : (
+        <>
+          <Link to="/login">Login</Link>
+          <Link to="/signup">Signup</Link>
+        </>
       )}
     </nav>
   );

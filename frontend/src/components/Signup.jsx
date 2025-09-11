@@ -1,48 +1,44 @@
+// frontend/src/components/Signup.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/auth/signup`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password }),
-        }
-      );
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password }),
+      });
       const data = await res.json();
-
       if (res.ok) {
-        // ✅ Save token directly after signup
         localStorage.setItem("token", data.token);
-
-        // ✅ Redirect user to dashboard
+        localStorage.setItem("user", JSON.stringify(data.user)); // save user also
         navigate("/dashboard");
       } else {
-        alert(data.error || "Signup failed");
+        setError(data.error || "Signup failed");
       }
     } catch (err) {
-      console.error(err);
-      alert("Server error. Please try again.");
+      setError("Something went wrong. Please try again.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Signup</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <input
         type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
         required
       />
       <input

@@ -1,55 +1,81 @@
 // frontend/src/components/UploadScores.jsx
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 
 const UploadScores = () => {
   const [scores, setScores] = useState([{ subject: "", marks: "" }]);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const handleChange = (index, field, value) => {
-    const updated = [...scores];
-    updated[index][field] = value;
-    setScores(updated);
+    const newScores = [...scores];
+    newScores[index][field] = value;
+    setScores(newScores);
   };
 
-  const addRow = () => setScores([...scores, { subject: "", marks: "" }]);
+  const addRow = () => {
+    setScores([...scores, { subject: "", marks: "" }]);
+  };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
+      const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/scores/upload`,
-        { scores },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ scores }),
+        }
       );
-      alert("Scores uploaded successfully!");
+      const data = await res.json();
+      if (res.ok) {
+        alert("Scores uploaded successfully!");
+      } else {
+        alert(data.error || "Failed to upload scores");
+      }
     } catch (err) {
-      console.error("Error uploading scores:", err);
-      alert("Failed to upload scores");
+      console.error(err);
+      alert("Server error. Please try again.");
     }
   };
 
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <h2>Upload Scores</h2>
-      {scores.map((score, index) => (
-        <div key={index}>
+      {user && <p>User: {user.name}</p>}
+      {scores.map((score, i) => (
+        <div key={i}>
           <input
             type="text"
             placeholder="Subject"
             value={score.subject}
-            onChange={(e) => handleChange(index, "subject", e.target.value)}
+            onChange={(e) => handleChange(i, "subject", e.target.value)}
+            required
           />
           <input
             type="number"
             placeholder="Marks"
             value={score.marks}
-            onChange={(e) => handleChange(index, "marks", e.target.value)}
+            onChange={(e) => handleChange(i, "marks", e.target.value)}
+            required
           />
         </div>
       ))}
-      <button onClick={addRow}>Add Row</button>
-      <button onClick={handleSubmit}>Upload</button>
-    </div>
+      <button type="button" onClick={addRow}>
+        Add Subject
+      </button>
+      <button type="submit">Submit Scores</button>
+    </form>
   );
 };
 
